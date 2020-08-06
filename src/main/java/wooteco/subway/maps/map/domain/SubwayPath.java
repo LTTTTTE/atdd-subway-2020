@@ -1,7 +1,6 @@
 package wooteco.subway.maps.map.domain;
 
 import com.google.common.collect.Lists;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,10 +38,9 @@ public class SubwayPath {
         return lineStationEdges.stream().mapToInt(it -> it.getLineStation().getDistance()).sum();
     }
 
-    public int calculateFare() {
-        Fare fare = new Fare(calculateDistance());
-        final int extraLineCharge = getMaxExtraCharge();
+    public int calculateFare(int age) {
+        Fare fare = new Fare(calculateDistance(), getMaxExtraCharge(), age);
 
-        return fare.getFare() + extraLineCharge;
+        return fare.getFare();
     }
 }

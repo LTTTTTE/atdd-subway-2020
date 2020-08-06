@@ -2,6 +2,7 @@ package wooteco.subway.maps.map.acceptance;
 
 import static wooteco.subway.maps.line.acceptance.step.LineStationAcceptanceStep.지하철_노선에_지하철역_등록되어_있음;
 import static wooteco.subway.maps.map.acceptance.step.PathAcceptanceStep.거리_경로_조회_요청;
+import static wooteco.subway.maps.map.acceptance.step.PathAcceptanceStep.거리_경로_조회_요청_로그인;
 import static wooteco.subway.maps.map.acceptance.step.PathAcceptanceStep.적절한_경로를_응답;
 import static wooteco.subway.maps.map.acceptance.step.PathAcceptanceStep.적절한_요금을_응답;
 import static wooteco.subway.maps.map.acceptance.step.PathAcceptanceStep.총_거리와_소요_시간을_함께_응답함;
@@ -16,6 +17,7 @@ import io.restassured.response.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import wooteco.security.core.TokenResponse;
 import wooteco.subway.common.acceptance.AcceptanceTest;
 import wooteco.subway.maps.line.acceptance.step.LineAcceptanceStep;
 import wooteco.subway.maps.line.dto.LineResponse;
@@ -127,8 +129,8 @@ public class PathAcceptanceTest extends AcceptanceTest {
     void findPathAndFareWithChildLoginMember() {
         //when
         회원_등록되어_있음(EMAIL, PASSWORD, 6);
-        로그인_되어_있음(EMAIL, PASSWORD);
-        ExtractableResponse<Response> response = 거리_경로_조회_요청("DURATION", 교대역, 양재역);
+        TokenResponse tokenResponse = 로그인_되어_있음(EMAIL, PASSWORD);
+        ExtractableResponse<Response> response = 거리_경로_조회_요청_로그인("DURATION", 교대역, 양재역, tokenResponse);
         //then
         적절한_경로를_응답(response, Lists.newArrayList(교대역, 강남역, 양재역));
         적절한_요금을_응답(response, 800);
@@ -139,8 +141,8 @@ public class PathAcceptanceTest extends AcceptanceTest {
     void findPathAndFareWithStudentLoginMember() {
         //when
         회원_등록되어_있음("eeemail@gmail.com", PASSWORD, 13);
-        로그인_되어_있음("eeemail@gmail.com", PASSWORD);
-        ExtractableResponse<Response> response = 거리_경로_조회_요청("DURATION", 교대역, 양재역);
+        TokenResponse tokenResponse = 로그인_되어_있음("eeemail@gmail.com", PASSWORD);
+        ExtractableResponse<Response> response = 거리_경로_조회_요청_로그인("DURATION", 교대역, 양재역, tokenResponse);
         //then
         적절한_경로를_응답(response, Lists.newArrayList(교대역, 강남역, 양재역));
         적절한_요금을_응답(response, 1070);
