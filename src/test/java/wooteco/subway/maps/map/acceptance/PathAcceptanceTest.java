@@ -19,6 +19,8 @@ import static wooteco.subway.maps.map.acceptance.step.PathAcceptanceStep.*;
 public class PathAcceptanceTest extends AcceptanceTest {
     private Long 교대역;
     private Long 강남역;
+    private Long 대구역;
+    private Long 부산역;
     private Long 양재역;
     private Long 남부터미널역;
     private Long 이호선;
@@ -26,7 +28,7 @@ public class PathAcceptanceTest extends AcceptanceTest {
     private Long 삼호선;
 
     /**
-     * 교대역    --- *2호선* ---   강남역
+     * 교대역    --- *2호선* ---   강남역 ----- *2호선* ----- 대구역 ----*2호선* ---- 부산역
      * |                        |
      * *3호선*                   *신분당선*
      * |                        |
@@ -39,6 +41,8 @@ public class PathAcceptanceTest extends AcceptanceTest {
         // given
         교대역 = 지하철역_등록되어_있음("교대역");
         강남역 = 지하철역_등록되어_있음("강남역");
+        대구역 = 지하철역_등록되어_있음("대구역");
+        부산역 = 지하철역_등록되어_있음("부산역");
         양재역 = 지하철역_등록되어_있음("양재역");
         남부터미널역 = 지하철역_등록되어_있음("남부터미널역");
 
@@ -48,6 +52,8 @@ public class PathAcceptanceTest extends AcceptanceTest {
 
         지하철_노선에_지하철역_등록되어_있음(이호선, null, 교대역, 0, 0);
         지하철_노선에_지하철역_등록되어_있음(이호선, 교대역, 강남역, 2, 2);
+        지하철_노선에_지하철역_등록되어_있음(이호선, 강남역, 대구역, 10, 10);
+        지하철_노선에_지하철역_등록되어_있음(이호선, 대구역, 부산역, 100, 100);
 
         지하철_노선에_지하철역_등록되어_있음(신분당선, null, 강남역, 0, 0);
         지하철_노선에_지하철역_등록되어_있음(신분당선, 강남역, 양재역, 2, 1);
@@ -61,7 +67,7 @@ public class PathAcceptanceTest extends AcceptanceTest {
     @Test
     void findPathByDistance() {
         //when
-        ExtractableResponse<Response> response = 거리_경로_조회_요청("DISTANCE", 1L, 3L);
+        ExtractableResponse<Response> response = 거리_경로_조회_요청("DISTANCE", 교대역, 양재역);
 
         //then
         적절한_경로를_응답(response, Lists.newArrayList(교대역, 남부터미널역, 양재역));
@@ -73,10 +79,40 @@ public class PathAcceptanceTest extends AcceptanceTest {
     @Test
     void findPathByDuration() {
         //when
-        ExtractableResponse<Response> response = 거리_경로_조회_요청("DURATION", 1L, 3L);
+        ExtractableResponse<Response> response = 거리_경로_조회_요청("DURATION", 교대역, 양재역);
         //then
         적절한_경로를_응답(response, Lists.newArrayList(교대역, 강남역, 양재역));
         총_거리와_소요_시간을_함께_응답함(response, 4, 3);
+    }
+
+    @DisplayName("두 역의 요금을 조회한다.")
+    @Test
+    void findPathAndFare() {
+        //when
+        ExtractableResponse<Response> response = 거리_경로_조회_요청("DURATION", 교대역, 양재역);
+        //then
+        적절한_경로를_응답(response, Lists.newArrayList(교대역, 강남역, 양재역));
+        적절한_요금을_응답(response, 1250);
+    }
+
+    @DisplayName("10km 초과 50km 이하 경로의 요금을 조회한다.")
+    @Test
+    void findPathAndFareOver10Km() {
+        //when
+        ExtractableResponse<Response> response = 거리_경로_조회_요청("DURATION", 교대역, 대구역);
+        //then
+        적절한_경로를_응답(response, Lists.newArrayList(교대역, 강남역, 양재역, 대구역));
+        적절한_요금을_응답(response, 1450);
+    }
+
+    @DisplayName("50km 초과 경로의 요금을 조회한다.")
+    @Test
+    void findPathAndFareOver50Km() {
+        //when
+        ExtractableResponse<Response> response = 거리_경로_조회_요청("DURATION", 교대역, 부산역);
+        //then
+        적절한_경로를_응답(response, Lists.newArrayList(교대역, 강남역, 양재역, 대구역, 부산역));
+        적절한_요금을_응답(response, 2650);
     }
 
     private Long 지하철_노선_등록되어_있음(String name, String color) {

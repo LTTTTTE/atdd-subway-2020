@@ -38,4 +38,9 @@ public class PathAcceptanceStep {
         assertThat(pathResponse.getDistance()).isEqualTo(totalDistance);
         assertThat(pathResponse.getDuration()).isEqualTo(totalDuration);
     }
+
+    public static void 적절한_요금을_응답(ExtractableResponse<Response> response, int totalFare){
+        PathResponse pathResponse = response.as(PathResponse.class);
+        assertThat(pathResponse.getFare()).isEqualTo(totalFare);
+    }
 }
