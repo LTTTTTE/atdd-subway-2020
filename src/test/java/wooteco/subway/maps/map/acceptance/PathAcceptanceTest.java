@@ -101,7 +101,7 @@ public class PathAcceptanceTest extends AcceptanceTest {
         //when
         ExtractableResponse<Response> response = 거리_경로_조회_요청("DURATION", 교대역, 대구역);
         //then
-        적절한_경로를_응답(response, Lists.newArrayList(교대역, 강남역, 양재역, 대구역));
+        적절한_경로를_응답(response, Lists.newArrayList(교대역, 강남역, 대구역));
         적절한_요금을_응답(response, 1450);
     }
 
@@ -111,7 +111,7 @@ public class PathAcceptanceTest extends AcceptanceTest {
         //when
         ExtractableResponse<Response> response = 거리_경로_조회_요청("DURATION", 교대역, 부산역);
         //then
-        적절한_경로를_응답(response, Lists.newArrayList(교대역, 강남역, 양재역, 대구역, 부산역));
+        적절한_경로를_응답(response, Lists.newArrayList(교대역, 강남역, 대구역, 부산역));
         적절한_요금을_응답(response, 2650);
     }
 
