@@ -40,20 +40,9 @@ public class SubwayPath {
     }
 
     public int calculateFare() {
-        final int distance = calculateDistance();
+        Fare fare = new Fare(calculateDistance());
         final int extraLineCharge = getMaxExtraCharge();
 
-        return calculateFareWithDistance(distance) + extraLineCharge;
-    }
-
-    public int calculateFareWithDistance(int distance) {
-        if (distance <= 10) {
-            return 1250;
-        }
-        if (distance <= 50) {
-            return 1250 + (distance / 5) * 100;
-        } else {
-            return 1250 + (distance / 8) * 100;
-        }
+        return fare.getFare() + extraLineCharge;
     }
 }
