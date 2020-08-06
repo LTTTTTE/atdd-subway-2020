@@ -208,9 +208,7 @@ export default {
     ...mapGetters(['stations', 'pathResult']),
     getCurrentTime() {
       const hour = new Date().getHours()
-      const morningOrAfternoon = hour < 12 ? "오전" : "오후";
-
-      return morningOrAfternoon + " " + hour + ":" + new Date().getMinutes();
+      return `${hour < 12 ? "오전" : "오후"} ${hour}:${new Date().getMinutes()}`;
     }
   },
   async created() {
