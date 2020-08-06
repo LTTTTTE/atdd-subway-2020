@@ -25,11 +25,35 @@ public class SubwayPath {
         return stationIds;
     }
 
+    public int getMaxExtraCharge() {
+        return lineStationEdges.stream()
+            .mapToInt(LineStationEdge::getLineExtraCharge)
+            .sum();
+    }
+
     public int calculateDuration() {
         return lineStationEdges.stream().mapToInt(it -> it.getLineStation().getDuration()).sum();
     }
 
     public int calculateDistance() {
         return lineStationEdges.stream().mapToInt(it -> it.getLineStation().getDistance()).sum();
+    }
+
+    public int calculateFare() {
+        final int distance = calculateDistance();
+        final int extraLineCharge = getMaxExtraCharge();
+
+        return calculateFareWithDistance(distance) + extraLineCharge;
+    }
+
+    public int calculateFareWithDistance(int distance) {
+        if (distance <= 10) {
+            return 1250;
+        }
+        if (distance <= 50) {
+            return 1250 + (distance / 5) * 100;
+        } else {
+            return 1250 + (distance / 8) * 100;
+        }
     }
 }
