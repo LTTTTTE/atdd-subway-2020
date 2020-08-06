@@ -1,5 +1,15 @@
 package wooteco.subway.maps.map.acceptance;
 
+import static wooteco.subway.maps.line.acceptance.step.LineStationAcceptanceStep.지하철_노선에_지하철역_등록되어_있음;
+import static wooteco.subway.maps.map.acceptance.step.PathAcceptanceStep.거리_경로_조회_요청;
+import static wooteco.subway.maps.map.acceptance.step.PathAcceptanceStep.적절한_경로를_응답;
+import static wooteco.subway.maps.map.acceptance.step.PathAcceptanceStep.적절한_요금을_응답;
+import static wooteco.subway.maps.map.acceptance.step.PathAcceptanceStep.총_거리와_소요_시간을_함께_응답함;
+import static wooteco.subway.members.member.acceptance.MemberAcceptanceTest.EMAIL;
+import static wooteco.subway.members.member.acceptance.MemberAcceptanceTest.PASSWORD;
+import static wooteco.subway.members.member.acceptance.step.MemberAcceptanceStep.로그인_되어_있음;
+import static wooteco.subway.members.member.acceptance.step.MemberAcceptanceStep.회원_등록되어_있음;
+
 import com.google.common.collect.Lists;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
@@ -11,9 +21,6 @@ import wooteco.subway.maps.line.acceptance.step.LineAcceptanceStep;
 import wooteco.subway.maps.line.dto.LineResponse;
 import wooteco.subway.maps.station.acceptance.step.StationAcceptanceStep;
 import wooteco.subway.maps.station.dto.StationResponse;
-
-import static wooteco.subway.maps.line.acceptance.step.LineStationAcceptanceStep.지하철_노선에_지하철역_등록되어_있음;
-import static wooteco.subway.maps.map.acceptance.step.PathAcceptanceStep.*;
 
 @DisplayName("지하철 경로 조회")
 public class PathAcceptanceTest extends AcceptanceTest {
@@ -113,6 +120,30 @@ public class PathAcceptanceTest extends AcceptanceTest {
         //then
         적절한_경로를_응답(response, Lists.newArrayList(교대역, 강남역, 대구역, 부산역));
         적절한_요금을_응답(response, 2650);
+    }
+
+    @DisplayName("어린아이 - 기본경로 요금조회")
+    @Test
+    void findPathAndFareWithChildLoginMember() {
+        //when
+        회원_등록되어_있음(EMAIL, PASSWORD, 6);
+        로그인_되어_있음(EMAIL, PASSWORD);
+        ExtractableResponse<Response> response = 거리_경로_조회_요청("DURATION", 교대역, 양재역);
+        //then
+        적절한_경로를_응답(response, Lists.newArrayList(교대역, 강남역, 양재역));
+        적절한_요금을_응답(response, 800);
+    }
+
+    @DisplayName("학생 - 기본경로 요금조회")
+    @Test
+    void findPathAndFareWithStudentLoginMember() {
+        //when
+        회원_등록되어_있음("eeemail@gmail.com", PASSWORD, 13);
+        로그인_되어_있음("eeemail@gmail.com", PASSWORD);
+        ExtractableResponse<Response> response = 거리_경로_조회_요청("DURATION", 교대역, 양재역);
+        //then
+        적절한_경로를_응답(response, Lists.newArrayList(교대역, 강남역, 양재역));
+        적절한_요금을_응답(response, 1070);
     }
 
     private Long 지하철_노선_등록되어_있음(String name, String color) {
