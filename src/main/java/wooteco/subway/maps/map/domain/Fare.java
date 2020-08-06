@@ -13,6 +13,7 @@ public class Fare {
     public Fare(int distance) {
         if (distance <= FIRST_EXTRA_DISTANCE_PIVOT) {
             this.fare = DEFAULT_FARE;
+            return;
         }
         if (distance <= SECOND_EXTRA_DISTANCE_PIVOT) {
             this.fare = DEFAULT_FARE
